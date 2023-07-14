@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <div>
       <main>
-        <button onClick={callAPI}>Make API Call!</button>
+        <button onClick={callAPI}>Make API Call</button>
       </main>
     </div>
   );
