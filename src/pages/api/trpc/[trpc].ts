@@ -13,6 +13,7 @@ const appRouter = router({
     .input(
       z.object({
         name: z.string().nullish(),
+        age: z.number(),
       })
     )
     .query(({ input }) => {
@@ -25,6 +26,14 @@ const appRouter = router({
   // 💡 Tip: Try adding a new procedure here and see if you can use it in the client!
   getUser: publicProcedure.query(() => {
     return { id: "1", name: "bob" };
+  }),
+  getData: publicProcedure.query(async () => {
+    const response = await fetch(
+      "https://jsonplaceholder.typicode.com/posts/1"
+    );
+    const data = await response.json();
+    console.log("Called in server", data);
+    return data;
   }),
 });
 

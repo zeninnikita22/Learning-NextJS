@@ -15,8 +15,8 @@ import { trpc } from "./utils/trpc";
 
 export default function Home() {
   // 💡 Tip: CMD+Click (or CTRL+Click) on `greeting` to go to the server definition
-  const result = trpc.getUser.useQuery();
-
+  const result = trpc.getData.useQuery();
+  console.log(result.data);
   if (!result.data) {
     return (
       <div>
@@ -32,7 +32,7 @@ export default function Home() {
        * 💡 Tip: CMD+Click (or CTRL+Click) on `text` to go to the server definition
        * 💡 Tip: Secondary click on `text` and "Rename Symbol" to rename it both on the client & server
        */}
-      <h1>{`This is ${result.data.name}, his id is ${result.data.id}`}</h1>
+      {/* <h1>{`This is ${result.data.text}, his id is ${result.data.text}`}</h1> */}
     </div>
   );
 }
