@@ -5,6 +5,7 @@
 import * as trpcNext from "@trpc/server/adapters/next";
 import { publicProcedure, router } from "../../../server/trpc";
 import { z } from "zod";
+import axios from "axios";
 
 const appRouter = router({
   greeting: publicProcedure
@@ -38,7 +39,41 @@ const appRouter = router({
       // console.log("Called in server", data);
       return data;
     }),
+  getCategories: publicProcedure.query(async () => {
+    const response = await fetch("http://localhost:1337/api/categories/");
+    const data = await response.json();
+    // console.log("Called in server", data);
+    return data;
+  }),
+  addCategory: publicProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        console.log({ input });
+        const result = await axios.post(
+          "http://localhost:1337/api/categories/",
+          {
+            data: {
+              name: input.name,
+            },
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      // await axios
+      //   .post(`http://localhost:1337/api/categories/`, "hui")
+      //   // .post(`http://localhost:1337/api/categories/`, input.name)
+      //   .then((response) => response.data);
+    }),
 });
+
+// const newCategoryMutation = useMutation({
+//   mutationFn: (newCategory) =>
+//     axios
+//       .post(`http://localhost:1337/api/categories/`, newCategory)
+//       .then((response) => response.data),
+// });
 
 // export only the type definition of the API
 // None of the actual implementation is exposed to the client
