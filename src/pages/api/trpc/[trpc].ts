@@ -6,6 +6,7 @@ import * as trpcNext from "@trpc/server/adapters/next";
 import { publicProcedure, router } from "../../../server/trpc";
 import { z } from "zod";
 import axios from "axios";
+import prisma from "../../../../lib/prisma";
 
 const appRouter = router({
   greeting: publicProcedure
@@ -66,6 +67,41 @@ const appRouter = router({
       //   // .post(`http://localhost:1337/api/categories/`, input.name)
       //   .then((response) => response.data);
     }),
+  addUser: publicProcedure
+    .input(z.object({ name: z.string(), email: z.string().email() }))
+    .mutation(async ({ input }) => {
+      try {
+        await prisma.user.create({
+          data: {
+            name: input.name,
+            email: input.email,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      // await axios
+      //   .post(`http://localhost:1337/api/categories/`, "hui")
+      //   // .post(`http://localhost:1337/api/categories/`, input.name)
+      //   .then((response) => response.data);
+    }),
+  deleteUser: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ input }) => {
+      try {
+        await prisma.user.delete({
+          where: {
+            email: input.email,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }),
+  getAllUsers: publicProcedure.query(async () => {
+    const data = await prisma.user.findMany();
+    return data;
+  }),
 });
 
 // const newCategoryMutation = useMutation({

@@ -23,7 +23,7 @@ export default function Home() {
   const queryClient = useQueryClient();
   const createAddMutatation = trpc.addCategory.useMutation();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     createAddMutatation.mutate({
       name: `${categoryName}`,
