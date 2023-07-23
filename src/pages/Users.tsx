@@ -6,8 +6,12 @@ export default function Users() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [userToDelete, setUserToDelete] = useState("");
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
+  const [selectedAuthorId, setSelectedAuthorId] = useState(0);
   const usersQuery = trpc.getAllUsers.useQuery();
   const addUserMutation = trpc.addUser.useMutation();
+  const addPostMutation = trpc.addPost.useMutation();
   const deleteUserMutation = trpc.deleteUser.useMutation();
 
   const handleSubmit = (e: any) => {
@@ -22,6 +26,15 @@ export default function Users() {
     e.preventDefault();
     deleteUserMutation.mutate({
       email: `${userToDelete}`,
+    });
+  };
+
+  const addPost = (e: any) => {
+    e.preventDefault();
+    addPostMutation.mutate({
+      authorId: selectedAuthorId,
+      title: `${postTitle}`,
+      content: `${postContent}`,
     });
   };
 
@@ -62,6 +75,35 @@ export default function Users() {
               <p>Id of user: {user.id}</p>
               <p>Name of user: {user.name}</p>
               <p>Email of user: {user.email}</p>
+              <form onSubmit={addPost}>
+                <input
+                  type="text"
+                  placeholder="Add title"
+                  onChange={(e) => setPostTitle(e.target.value)}
+                ></input>
+                <input
+                  type="text"
+                  placeholder="Add content"
+                  onChange={(e) => setPostContent(e.target.value)}
+                ></input>
+                <button
+                  type="submit"
+                  onClick={() => setSelectedAuthorId(user.id)}
+                >
+                  Add new post
+                </button>
+              </form>
+              <div>
+                Post of user:
+                {user.posts.map((post) => {
+                  return (
+                    <div key={post.id}>
+                      <p>Title: {post.title}</p>
+                      <p>Content: {post.content}</p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           );
         })}

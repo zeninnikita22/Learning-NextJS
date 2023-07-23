@@ -89,6 +89,16 @@ const appRouter = router({
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input }) => {
       try {
+        await prisma.user.update({
+          where: {
+            email: input.email,
+          },
+          data: {
+            posts: {
+              deleteMany: {},
+            },
+          },
+        });
         await prisma.user.delete({
           where: {
             email: input.email,
@@ -99,9 +109,34 @@ const appRouter = router({
       }
     }),
   getAllUsers: publicProcedure.query(async () => {
-    const data = await prisma.user.findMany();
+    const data = await prisma.user.findMany({ include: { posts: true } });
     return data;
   }),
+  addPost: publicProcedure
+    .input(
+      z.object({ title: z.string(), content: z.string(), authorId: z.number() })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        await prisma.post.create({
+          data: {
+            title: input.title,
+            content: input.content,
+            authorId: input.authorId,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      // await axios
+      //   .post(`http://localhost:1337/api/categories/`, "hui")
+      //   // .post(`http://localhost:1337/api/categories/`, input.name)
+      //   .then((response) => response.data);
+    }),
+  // getAllUsersPosts: publicProcedure.query(async () => {
+  //   const data = await prisma.user.findMany();
+  //   return data;
+  // }),
 });
 
 // const newCategoryMutation = useMutation({
